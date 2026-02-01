@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: .
+      target: ${BUILD_TARGET:-dev}
+    container_name: qr_api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-9000}:${PORT:-9000}"
+    environment:
+      ENV: ${ENV:-development}
+      PORT: ${PORT:-9000}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_SSL: ${DB_SSL:-false}
+      JWT_SECRET: ${JWT_SECRET:-dev_secret_change_me}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-15}

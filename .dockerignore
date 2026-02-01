@@ -1,0 +1,24 @@
+# Dependency directories
+node_modules/
+
+# Build artifacts
+dist/
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose*.yml
+
+# Logs
+npm-debug.log*
+
+# Environment variables
+.env*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
