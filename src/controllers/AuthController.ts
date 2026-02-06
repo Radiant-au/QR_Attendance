@@ -5,11 +5,11 @@ import { ShopKeeperAuthService } from "@services/AuthService";
 export class AuthController {
 
   // LOGIN ADMIN
-  loginAdmin = asyncHandler(
+  login = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
       const data = req.body;
 
-      const result = await ShopKeeperAuthService.Adminlogin(data);
+      const result = await ShopKeeperAuthService.login(data);
 
       res.status(200).json(result);
     }

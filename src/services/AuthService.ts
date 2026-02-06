@@ -7,7 +7,7 @@ import { UsersRepository } from "@repositories/UsersRepository";
 
 export class ShopKeeperAuthService {
   // login admin
-  static async Adminlogin(data: LoginRequestDTO): Promise<{ token: string }> {
+  static async login(data: LoginRequestDTO): Promise<{ token: string }> {
     const user = await UsersRepository.findOneBy({ username: data.username });
     if (user && (await HashUtils.comparePassword(data.password, user.password))) {
       const expiresIn: StringValue = (

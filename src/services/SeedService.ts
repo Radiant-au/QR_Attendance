@@ -30,8 +30,7 @@ export class SeedService {
             admin.username = env.ADMIN_USERNAME;
             const hashedPassword = await HashUtils.hashPassword(env.ADMIN_PASSWORD);
             admin.password = hashedPassword;
-            admin.role = "super_admin";
-            admin.qrSecret = QrSignature.generateSignature(env.ADMIN_USERNAME);
+            admin.role = "admin";
 
             await UsersRepository.save(admin);
             console.log("Admin user 'Shopadmin' created successfully!");

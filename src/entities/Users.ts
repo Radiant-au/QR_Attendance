@@ -15,7 +15,7 @@ export class User {
   @Column({ select: false })
   password: string;
 
-  @Column({ type: 'enum', enum: ['user', 'admin', 'super_admin'], default: 'user' })
+  @Column({ type: 'enum', enum: ['user', 'admin'], default: 'user' })
   role: string;
 
   // Profile fields
@@ -30,10 +30,6 @@ export class User {
 
   @Column({ default: false })
   isProfileCompleted: boolean;
-
-  // QR Code signature secret (unique per user for security)
-  @Column({ unique: true })
-  qrSecret: string;
 
   @CreateDateColumn()
   createdAt: Date;

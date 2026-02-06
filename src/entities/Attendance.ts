@@ -1,11 +1,21 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+// entities/Attendance.ts
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { User } from "./Users";
 import { Activity } from "./Activity";
+import { ActivityRegistration } from "./ActivityRegistration";
 
 @Entity('attendances')
+@Unique(['user', 'activity'])
 export class Attendance {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({
+    type: 'enum',
+    enum: ['registered', 'walk-in', 'leave'],
+    default: 'registered'
+  })
+  attendanceType: string; // How they're in the system
 
   @Column({ type: 'uuid' })
   userId: string;
@@ -13,20 +23,23 @@ export class Attendance {
   @Column({ type: 'uuid' })
   activityId: string;
 
+  @Column({ type: 'uuid' })
+  registrationId: string;
+
   @Column({ default: false })
-  isPresent: boolean;
+  isPresent: boolean; // Actually showed up or not
 
   @Column({ type: 'timestamp', nullable: true })
   scannedAt: Date;
 
   @Column({ type: 'uuid', nullable: true })
-  scannedById: string; // Admin who scanned
+  scannedById: string;
 
   @Column({ type: 'varchar', nullable: true })
-  scanMethod: string; // 'qr', 'manual', etc.
+  scanMethod: string; // 'qr', 'manual', 'auto'
 
   @Column({ type: 'text', nullable: true })
-  notes: string;
+  notes: string; // Leave reason, admin notes, etc.
 
   @CreateDateColumn()
   createdAt: Date;
@@ -45,9 +58,9 @@ export class Attendance {
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'scannedById' })
-  scannedBy: User;
+  scannedBy?: User;
 
-  // Composite unique constraint (one attendance per user per activity)
-  @Index(['userId', 'activityId'], { unique: true })
-  userActivityAttendance: any;
+  @ManyToOne(() => ActivityRegistration, { nullable: true })
+  @JoinColumn({ name: 'registrationId' })
+  registration?: ActivityRegistration;
 }

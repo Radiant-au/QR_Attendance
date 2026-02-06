@@ -4,7 +4,8 @@ import { AuthController } from "@controllers/AuthController";
 const router = Router();
 const authController = new AuthController();
 
-// Shopkeeper Routes
-router.post("/admin", authController.loginAdmin);
+// Admin Routes
+router.post("/admin", authController.login);
+router.post("/user", authController.login);
 
 export default router;

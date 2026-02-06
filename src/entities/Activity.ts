@@ -23,8 +23,8 @@ export class Activity {
   @Column({ length: 200 })
   location: string;
 
-  @Column({ type: 'int', nullable: true })
-  capacity: number;
+  // @Column({ type: 'int', nullable: true })
+  // capacity: number;
 
   @Column({ type: 'enum', enum: ['upcoming', 'ongoing', 'completed', 'cancelled'], default: 'upcoming' })
   status: string;

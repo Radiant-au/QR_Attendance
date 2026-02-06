@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, Length } from "class-validator";
+import { IsOptional, IsString, Length } from "class-validator";
 
 export class CreateUserRequestDto {
 
@@ -41,9 +41,6 @@ export interface UserResponse {
   major: string;
   year: string;
   role: string;
+  isProfileCompleted: boolean;
   createdAt: Date;
-}
-
-export interface OneUserResponse extends UserResponse {
-  qrSecret: string;
 }

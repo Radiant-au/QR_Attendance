@@ -1,10 +1,26 @@
-import { CreateUserRequestDto, OneUserResponse, UpdateUserRequestDto, UserResponse } from "@dtos/UserDto";
+import { CreateUserRequestDto, UpdateUserRequestDto, UserResponse } from "@dtos/UserDto";
 import { User } from "@entities/Users";
 import { UsersRepository } from "@repositories/UsersRepository";
 import { AppError } from "@utils/AppError";
 import { QrSignature } from "@utils/Signature";
 
 export class UsersService {
+
+  static async getMyDynamicQr(userId: string) {
+    // Verify user exists
+    const user = await UsersRepository.findOne({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    // Generate QR data (valid for 10 minutes)
+    const qrToken = QrSignature.generateUserQrToken(userId);
+
+    return qrToken;
+  }
 
   // create 
   static async createUser(
@@ -15,7 +31,6 @@ export class UsersService {
     user.username = data.username;
     user.password = data.password;
     user.role = data.role;
-    user.qrSecret = QrSignature.generateSignature(data.username);
     const result = await UsersRepository.save(user);
 
     return result ? "success" : "failed";
@@ -30,13 +45,14 @@ export class UsersService {
       role: user.role,
       fullName: user.fullName,
       major: user.major,
+      isProfileCompleted: user.isProfileCompleted,
       year: user.year,
       createdAt: user.createdAt
     }))
   }
 
   // read one
-  static async getUserById(id: string): Promise<OneUserResponse> {
+  static async getUserById(id: string): Promise<UserResponse> {
     const user = await UsersRepository.findOneBy({ id });
 
     if (!user) {
@@ -49,9 +65,9 @@ export class UsersService {
       role: user.role,
       fullName: user.fullName,
       major: user.major,
+      isProfileCompleted: user.isProfileCompleted,
       year: user.year,
       createdAt: user.createdAt,
-      qrSecret: user.qrSecret,
     };
   }
 
@@ -79,6 +95,7 @@ export class UsersService {
       role: updatedUser.role,
       fullName: updatedUser.fullName,
       major: updatedUser.major,
+      isProfileCompleted: updatedUser.isProfileCompleted,
       year: updatedUser.year,
       createdAt: updatedUser.createdAt,
     };

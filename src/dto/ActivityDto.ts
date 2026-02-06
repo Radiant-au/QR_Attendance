@@ -1,48 +1,50 @@
-import { IsString, IsNotEmpty, IsInt } from 'class-validator';
+import { IsString, IsNotEmpty, IsDate, IsOptional } from 'class-validator';
 
-
-
-/**
- * Used for API responses to hide sensitive data like password
- */
-export interface ShopkeeperResponseDto {
-  id: string;
-  username: string;
-  totalScanned: number;
-  shopId: string;
-  shopName: string;
-}
-
-export interface scannedCoupons {
-  id: string;
-  code: string;
-  date: string;
-}
-
-export interface ShopkeeperWithCouponsResponseDto extends ShopkeeperResponseDto {
-  scannedCoupons?: scannedCoupons[];
-}
-
-// registe request
-export class CreateShopkeeperDTO {
+// create activity request
+export class CreateActivityDTO {
 
   @IsString()
   @IsNotEmpty()
-  username: string;      // Login identifier (MUST be unique)
+  title: string;      // Login identifier (MUST be unique)
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  description: string;
 
-  @IsInt()
-  shopId: number;
-}
+  @IsDate()
+  @IsNotEmpty()
+  startDateTime: Date;
 
-//register response
-export class RegisterResponseDTO {
-  @IsInt()
-  id: number;
+  @IsDate()
+  @IsOptional()
+  endDateTime?: Date;
 
   @IsString()
-  username: string;
+  @IsNotEmpty()
+  location: string;
+
+  @IsString()
+  @IsOptional()
+  status?: string;
+}
+
+export class UpdateActivityStatusDTO {
+  @IsString()
+  @IsNotEmpty()
+  activityId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  status: string;
+}
+
+export interface ActivityResponseDTO {
+  id: string;
+  title: string;
+  description: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  location: string;
+  status: string;
+  // capacity: number;
 }

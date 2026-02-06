@@ -4,6 +4,12 @@ import { UsersService } from "@services/UsersService";
 
 export class UserController {
 
+  getUserQr = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.params.id as string;
+    const qrToken = await UsersService.getMyDynamicQr(userId);
+    res.status(200).json(qrToken);
+  })
+
   // CREATE SHOP
   createUser = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {

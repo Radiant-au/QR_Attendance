@@ -1,8 +1,9 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, Unique, Column } from "typeorm";
 import { User } from "./Users";
 import { Activity } from "./Activity";
 
 @Entity('activity_registrations')
+@Unique(['user', 'activity'])
 export class ActivityRegistration {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -13,7 +14,13 @@ export class ActivityRegistration {
   @Column({ type: 'uuid' })
   activityId: string;
 
-  @Column({ type: 'enum', enum: ['registered', 'cancelled', 'waitlist'], default: 'registered' })
+  @Column({ type: 'text', nullable: true })
+  cancellationReason: string; // Optional: why they cancelled
+
+  @Column({ type: 'timestamp', nullable: true })
+  cancelledAt: Date; // When they cancelled
+
+  @Column({ type: 'enum', enum: ['registered', 'cancelled'], default: 'registered' })
   status: string;
 
   @CreateDateColumn()
@@ -30,8 +37,4 @@ export class ActivityRegistration {
   @ManyToOne(() => Activity, activity => activity.registrations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'activityId' })
   activity: Activity;
-
-  // Composite unique constraint
-  @Index(['userId', 'activityId'], { unique: true })
-  userActivity: any;
 }
