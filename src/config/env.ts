@@ -9,6 +9,7 @@ interface EnvConfig {
   DB_USERNAME: string;
   DB_PASSWORD: string;
   DB_NAME: string;
+  USE_HTTPS: string;
   JWT_SECRET: string;
   JWT_EXPIRE_MINUTES: string;
   PORT: string;
@@ -37,6 +38,7 @@ function validateEnv(): EnvConfig {
     DB_USERNAME: process.env.DB_USERNAME!,
     DB_PASSWORD: process.env.DB_PASSWORD!,
     DB_NAME: process.env.DB_NAME!,
+    USE_HTTPS: process.env.USE_HTTPS || 'false',
     JWT_SECRET: process.env.JWT_SECRET!,
     JWT_EXPIRE_MINUTES: process.env.JWT_EXPIRE_MINUTES || '15',
     PORT: process.env.PORT || '5000',

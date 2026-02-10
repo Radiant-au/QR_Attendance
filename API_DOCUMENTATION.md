@@ -4,11 +4,16 @@ This document provides a detailed description of the API endpoints for the QR At
 
 ## Base URL
 
-All API endpoints are prefixed with `/api/v1`. This is not explicitly in the code, but it is a common convention. I will assume this is the case. If not, the frontend developer can adjust.
+All API endpoints are prefixed with `/api`.
 
 ## Authentication
 
-Some endpoints require a JSON Web Token (JWT) to be sent in the `Authorization` header of the request. The header should be in the format: `Bearer <token>`.
+Some endpoints require a JSON Web Token (JWT).
+
+The token can be provided in either of these ways:
+
+-   **Cookie (browser):** `token` (HTTP-only cookie)
+-   **Authorization header:** `Authorization: Bearer <token>`
 
 There are two types of authentication:
 
@@ -19,7 +24,9 @@ There are two types of authentication:
 
 ## Auth
 
-### `POST /auth/admin`
+Base path: `/auth`
+
+### `POST /admin`
 
 -   **Description:** Logs in an admin user.
 -   **Authentication:** None
@@ -33,11 +40,12 @@ There are two types of authentication:
 -   **Response:**
     ```json
     {
+      "user": {},
       "token": "string"
     }
     ```
 
-### `POST /auth/user`
+### `POST /user`
 
 -   **Description:** Logs in a regular user.
 -   **Authentication:** None
@@ -51,7 +59,19 @@ There are two types of authentication:
 -   **Response:**
     ```json
     {
+      "user": {},
       "token": "string"
+    }
+    ```
+
+### `GET /me`
+
+-   **Description:** Returns the current authenticated user.
+-   **Authentication:** User
+-   **Response:**
+    ```json
+    {
+      "user": {}
     }
     ```
 
@@ -73,18 +93,9 @@ Base path: `/user`
       "role": "string"
     }
     ```
--   **Response:** (`UserResponse`)
+-   **Response:**
     ```json
-    {
-      "id": "string",
-      "username": "string",
-      "fullName": "string",
-      "major": "string",
-      "year": "string",
-      "isProfileCompleted" : "string",
-      "role": "string",
-      "createdAt": "Date"
-    }
+    "success"
     ```
 
 ### `GET /getQR/:id`
@@ -93,9 +104,7 @@ Base path: `/user`
 -   **Authentication:** User
 -   **Response:**
     ```json
-    {
-      "qrToken": "string"
-    }
+    "string"
     ```
 
 ### `GET /`
@@ -108,12 +117,32 @@ Base path: `/user`
 
 -   **Description:** Gets a user by ID.
 -   **Authentication:** User
--   **Response:** A `UserResponse` object.
+-   **Response:** (`OneUserResponse`)
+    ```json
+    {
+      "id": "string",
+      "username": "string",
+      "role": "string",
+      "fullName": "string",
+      "major": "string",
+      "registrations": ["string"],
+      "attendances": [
+        {
+          "actvityName": "string",
+          "isPresent": true,
+          "scanMethod": "string"
+        }
+      ],
+      "isProfileCompleted": true,
+      "year": "string",
+      "createdAt": "Date"
+    }
+    ```
 
 ### `PUT /:id`
 
 -   **Description:** Updates a user.
--   **Authentication:** Admin
+-   **Authentication:** User
 -   **Request Body:** (`UpdateUserRequestDto`)
     ```json
     {
@@ -156,32 +185,24 @@ Base path: `/activity`
       "status": "string"
     }
     ```
--   **Response:** (`ActivityResponseDTO`)
+-   **Response:**
     ```json
-    {
-      "id": "string",
-      "title": "string",
-      "description": "string",
-      "startDateTime": "Date",
-      "endDateTime": "Date",
-      "location": "string",
-      "status": "string"
-    }
+    "success"
     ```
 
 ### `GET /`
 
 -   **Description:** Gets all activities.
--   **Authentication:** Admin
--   **Response:** An array of `ActivityResponseDTO` objects.
-
-### `GET /user`
-
--   **Description:** Gets all activities.
 -   **Authentication:** User
 -   **Response:** An array of `ActivityResponseDTO` objects.
 
-### `PUT /status/change`
+### `GET /:id/attendance`
+
+-   **Description:** Gets attendance/registration information for a specific activity.
+-   **Authentication:** User
+-   **Response:** An array of attendance/registration objects.
+
+### `PATCH /status/change`
 
 -   **Description:** Updates the status of an activity.
 -   **Authentication:** Admin
@@ -192,14 +213,20 @@ Base path: `/activity`
       "status": "string"
     }
     ```
--   **Response:** An updated `ActivityResponseDTO` object.
+-   **Response:**
+    ```json
+    "success"
+    ```
 
 ### `PUT /:id`
 
 -   **Description:** Updates an activity.
 -   **Authentication:** Admin
 -   **Request Body:** (`CreateActivityDTO`)
--   **Response:** An updated `ActivityResponseDTO` object.
+-   **Response:**
+    ```json
+    "success"
+    ```
 
 ### `DELETE /:id`
 
@@ -207,9 +234,7 @@ Base path: `/activity`
 -   **Authentication:** Admin
 -   **Response:**
     ```json
-    {
-      "message": "Activity deleted successfully"
-    }
+    "success"
     ```
 
 ---
@@ -217,6 +242,8 @@ Base path: `/activity`
 ## Activity Registrations
 
 Base path: `/activity-registration`
+
+All endpoints under this base path require **User** authentication.
 
 ### `POST /`
 
@@ -229,7 +256,10 @@ Base path: `/activity-registration`
       "activityId": "string"
     }
     ```
--   **Response:** A success message or registration object.
+-   **Response:**
+    ```json
+    "success"
+    ```
 
 ### `PUT /cancel`
 
@@ -242,10 +272,56 @@ Base path: `/activity-registration`
       "activityId": "string"
     }
     ```
--   **Response:** A success message or updated registration object.
+-   **Response:**
+    ```json
+    "success"
+    ```
 
 ---
 
 ## Attendance
 
-There are currently no API endpoints exposed for managing attendance. The `AttendanceController` is not used in any routes. However, attendance is initialized when a new activity is created.
+Base path: `/attendance`
+
+### `POST /mark`
+
+-   **Description:** Marks a user as present for an ongoing activity by scanning their QR token.
+-   **Authentication:** Admin
+-   **Request Body:** (`MarkAttendance`)
+    ```json
+    {
+      "activityId": "string",
+      "qrToken": "string",
+      "scanMethod": "string"
+    }
+    ```
+-   **Response:** (`AttendanceResponse`)
+    ```json
+    {
+      "userName": "string",
+      "attendanceType": "string",
+      "message": "string"
+    }
+    ```
+
+### `POST /leave`
+
+-   **Description:** Requests leave for an activity.
+-   **Authentication:** User
+-   **Request Body:** (`LeaveRequest`)
+    ```json
+    {
+      "activityId": "string",
+      "notes": "string"
+    }
+    ```
+-   **Response:** (`AttendanceResponse`)
+    ```json
+    {
+      "userName": "string",
+      "attendanceType": "string",
+      "message": "string"
+    }
+    ```
+
+Attendance is initialized internally when an activity status changes from `closed` to `ongoing`.

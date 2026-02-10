@@ -1,4 +1,7 @@
+import { Type } from 'class-transformer';
 import { IsString, IsNotEmpty, IsDate, IsOptional } from 'class-validator';
+import { ActivityRegistrationResponse } from './ActivityRegistrationDto';
+import { AttendanceRecord } from './AttendanceDto';
 
 // create activity request
 export class CreateActivityDTO {
@@ -11,10 +14,12 @@ export class CreateActivityDTO {
   @IsNotEmpty()
   description: string;
 
+  @Type(() => Date)
   @IsDate()
   @IsNotEmpty()
   startDateTime: Date;
 
+  @Type(() => Date)
   @IsDate()
   @IsOptional()
   endDateTime?: Date;
@@ -46,5 +51,10 @@ export interface ActivityResponseDTO {
   endDateTime: Date;
   location: string;
   status: string;
-  // capacity: number;
+  createdAt: Date;
+}
+
+export interface RegisterAttendanceResponseDTO {
+  registration: ActivityRegistrationResponse[];
+  attendance: AttendanceRecord[];
 }

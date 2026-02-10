@@ -26,7 +26,7 @@ export class Activity {
   // @Column({ type: 'int', nullable: true })
   // capacity: number;
 
-  @Column({ type: 'enum', enum: ['upcoming', 'ongoing', 'completed', 'cancelled'], default: 'upcoming' })
+  @Column({ type: 'enum', enum: ['upcoming', 'ongoing', 'completed', 'closed'], default: 'upcoming' })
   status: string;
 
   // Metadata

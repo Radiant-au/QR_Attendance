@@ -34,6 +34,12 @@ export class UpdateUserRequestDto {
   year?: string;
 }
 
+export interface UserAttendance{
+  actvityName: string;
+  isPresent: boolean;
+  scanMethod: string;
+}
+
 export interface UserResponse {
   id: string;
   username: string;
@@ -43,4 +49,9 @@ export interface UserResponse {
   role: string;
   isProfileCompleted: boolean;
   createdAt: Date;
+}
+
+export interface OneUserResponse extends UserResponse{
+  registrations: string[];
+  attendances: UserAttendance[];
 }

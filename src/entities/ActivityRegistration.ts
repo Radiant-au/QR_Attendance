@@ -13,13 +13,7 @@ export class ActivityRegistration {
 
   @Column({ type: 'uuid' })
   activityId: string;
-
-  @Column({ type: 'text', nullable: true })
-  cancellationReason: string; // Optional: why they cancelled
-
-  @Column({ type: 'timestamp', nullable: true })
-  cancelledAt: Date; // When they cancelled
-
+  
   @Column({ type: 'enum', enum: ['registered', 'cancelled'], default: 'registered' })
   status: string;
 

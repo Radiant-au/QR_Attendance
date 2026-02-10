@@ -1,4 +1,4 @@
-
+  
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ActivityRegistration } from './ActivityRegistration';
 import { Attendance } from './Attendance';
@@ -12,7 +12,7 @@ export class User {
   @Column({ unique: true, length: 50 })
   username: string;
 
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @Column({ type: 'enum', enum: ['user', 'admin'], default: 'user' })

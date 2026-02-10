@@ -1,8 +1,9 @@
-import { ActivityResponseDTO, CreateActivityDTO, UpdateActivityStatusDTO } from "@dtos/ActivityDto";
+import {  ActivityResponseDTO, CreateActivityDTO, RegisterAttendanceResponseDTO, UpdateActivityStatusDTO } from "@dtos/ActivityDto";
 import { Activity } from "@entities/Activity";
 import { ActivityRepository } from "@repositories/ActivityRepository";
 import { AppError } from "@utils/AppError";
 import { AttendanceService } from "./AttendanceService";
+import { ActivityRegistrationService } from "./ActivityRegistrationService";
 
 export class ActivityService {
 
@@ -13,7 +14,7 @@ export class ActivityService {
     }
     const oldStatus = activity.status;
     activity.status = data.status;
-    if (oldStatus === 'upcoming' && data.status === 'ongoing') {
+    if (oldStatus === 'closed' && data.status === 'ongoing') {
       //some attendance creation
       await AttendanceService.initializeAttendance(activity.id);
     }
@@ -26,6 +27,7 @@ export class ActivityService {
 
   // create 
   static async createActivity(
+    creatorId: string,
     data: CreateActivityDTO
   ): Promise<string> {
 
@@ -35,6 +37,7 @@ export class ActivityService {
     activity.startDateTime = data.startDateTime;
     activity.endDateTime = data.endDateTime;
     activity.location = data.location;
+    activity.createdById = creatorId;
     activity.status = 'upcoming';
     const result = await ActivityRepository.save(activity);
 
@@ -58,24 +61,14 @@ export class ActivityService {
   }
 
   // read one
-  // static async getActivityById(id: string): Promise<ActivityResponseDTO> {
-  //   const activity = await ActivityRepository.findOneBy({ id });
-
-  //   if (!activity) {
-  //     throw new AppError("Activity not found", 404);
-  //   }
-
-  //   return {
-  //     id: user.id,
-  //     username: user.username,
-  //     role: user.role,
-  //     fullName: user.fullName,
-  //     major: user.major,
-  //     year: user.year,
-  //     createdAt: user.createdAt,
-  //     qrSecret: user.qrSecret,
-  //   };
-  // }
+  static async getActivityAttendanceRegistraion(id: string): Promise<RegisterAttendanceResponseDTO> {
+    const registrations = await ActivityRegistrationService.getRegistrationsByActivityId(id);
+    const attendance = await AttendanceService.getAttendanceByActivityId(id);
+    return {
+      registration: registrations,
+      attendance: attendance
+    };
+  }
 
   // update
   static async updateActivity(

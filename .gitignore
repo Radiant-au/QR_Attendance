@@ -4,6 +4,9 @@ node_modules/
 # Build artifacts
 dist/
 
+# SSL Certificates
+certs/
+
 # Environment variables
 .env
 .env.development

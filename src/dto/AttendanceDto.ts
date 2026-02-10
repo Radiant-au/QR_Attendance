@@ -1,7 +1,6 @@
 export interface MarkAttendance {
     activityId: string;
     qrToken: string;
-    scannedById: string;
     scanMethod: string;
 }
 
@@ -13,6 +12,15 @@ export interface AttendanceResponse {
 
 export interface LeaveRequest {
     activityId: string;
-    userId: string;
+    notes: string;
+}
+
+export interface AttendanceRecord {
+    id: string;
+    userName: string;
+    major: string;
+    year: string;
+    attendanceType: string;
+    isPresent: boolean;
     notes: string;
 }

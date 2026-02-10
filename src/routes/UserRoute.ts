@@ -12,7 +12,7 @@ router.post("/", authenticateAdminToken, validateBody(CreateUserRequestDto), use
 router.get("/getQR/:id", authenticateUserToken, userController.getUserQr)
 router.get("/", authenticateAdminToken, userController.getAllUsers);
 router.get("/:id", authenticateUserToken, userController.getUserById);
-router.put("/:id", authenticateAdminToken, validateBody(UpdateUserRequestDto), userController.updateUser);
+router.put("/:id", authenticateUserToken, validateBody(UpdateUserRequestDto), userController.updateUser);
 router.delete("/:id", authenticateAdminToken, userController.deleteUser);
 
 export default router;

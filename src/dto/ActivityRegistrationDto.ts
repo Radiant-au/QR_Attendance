@@ -19,3 +19,11 @@ export class CancelActivityReqDto {
     @IsNotEmpty()
     activityId: string;
 }
+
+export interface ActivityRegistrationResponse {
+    username: string;
+    fullName: string;
+    major: string;
+    year: string;
+    registeredAt: Date;
+}

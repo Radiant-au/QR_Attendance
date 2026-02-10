@@ -1,4 +1,4 @@
-import { AttendanceResponse, LeaveRequest, MarkAttendance } from "@dtos/AttendanceDto";
+import { AttendanceRecord, AttendanceResponse, LeaveRequest, MarkAttendance } from "@dtos/AttendanceDto";
 import { ActivityRegistrationRepository } from "@repositories/ActivityRegistrationRepository";
 import { ActivityRepository } from "@repositories/ActivityRepository";
 import { AttendanceRepository } from "@repositories/AttendanceRepository";
@@ -38,7 +38,7 @@ export class AttendanceService {
   }
 
   //mark attendance for user
-  static async markAttendance(data: MarkAttendance): Promise<AttendanceResponse> {
+  static async markAttendance(scannerId: string, data: MarkAttendance): Promise<AttendanceResponse> {
     // Verify QR signature and expiration
     const verification = QrSignature.verifyQrToken(data.qrToken);
 
@@ -81,7 +81,7 @@ export class AttendanceService {
 
       attendance.isPresent = true;
       attendance.scannedAt = new Date();
-      attendance.scannedById = data.scannedById;
+      attendance.scannedById = scannerId;
       attendance.scanMethod = data.scanMethod;
     } else {
       // Walk-in user
@@ -99,7 +99,7 @@ export class AttendanceService {
         attendanceType: 'walk-in',
         isPresent: true,
         scannedAt: new Date(),
-        scannedById: data.scannedById,
+        scannedById: scannerId,
         scanMethod: data.scanMethod,
         notes: 'Walk-in via QR scan'
       });
@@ -116,8 +116,8 @@ export class AttendanceService {
     };
   }
 
-  static async requestLeave(data: LeaveRequest) {
-    const attendance = await AttendanceRepository.findOneByOrFail({ id: data.userId });
+  static async requestLeave(userId : string, data: LeaveRequest) {
+    const attendance = await AttendanceRepository.findOneByOrFail({ id: userId });
     attendance.attendanceType = 'leave';
     attendance.isPresent = false;
     attendance.notes = data.notes;
@@ -127,6 +127,24 @@ export class AttendanceService {
       attendanceType: attendance.attendanceType,
       message: 'Leave submitted successfully'
     };
+  }
+
+  static async getAttendanceByActivityId(activityId: string): Promise<AttendanceRecord[]> {
+    const attendances = await AttendanceRepository.find({
+      where: {
+        activityId
+      },
+      relations: ['user']
+    });
+    return attendances.map((attendance) => ({
+      id: attendance.id,
+      userName: attendance.user.fullName,
+      major: attendance.user.major,
+      year: attendance.user.year,
+      attendanceType: attendance.attendanceType,
+      isPresent: attendance.isPresent,
+      notes: attendance.notes
+    }));
   }
 
 }

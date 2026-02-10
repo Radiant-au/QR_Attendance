@@ -1,4 +1,4 @@
-import { CancelActivityReqDto, RegisterActivityReqDto } from "@dtos/ActivityRegistrationDto";
+import { ActivityRegistrationResponse, CancelActivityReqDto, RegisterActivityReqDto } from "@dtos/ActivityRegistrationDto";
 import { ActivityRegistrationRepository } from "@repositories/ActivityRegistrationRepository";
 import { ActivityRepository } from "@repositories/ActivityRepository";
 import { UsersRepository } from "@repositories/UsersRepository";
@@ -26,8 +26,6 @@ export class ActivityRegistrationService {
         if (existingRegistration) {
             if (existingRegistration.status === 'cancelled') {
                 existingRegistration.status = 'registered';
-                existingRegistration.cancellationReason = null;
-                existingRegistration.cancelledAt = null;
                 existingRegistration.updatedAt = new Date();
 
                 await ActivityRegistrationRepository.save(existingRegistration);
@@ -67,12 +65,27 @@ export class ActivityRegistrationService {
         }
 
         existingRegistration.status = 'cancelled';
-        existingRegistration.cancellationReason = data.cancellationReason;
-        existingRegistration.cancelledAt = new Date();
         existingRegistration.updatedAt = new Date();
 
         await ActivityRegistrationRepository.save(existingRegistration);
 
         return "success";
+    }
+
+    static async getRegistrationsByActivityId(activityId: string) : Promise <ActivityRegistrationResponse[]> {
+        const registrations = await ActivityRegistrationRepository.find({
+            where: {
+                activityId
+            },
+            relations: ['user']
+        });
+
+        return registrations.map(registration => ({
+            username: registration.user.username,
+            fullName: registration.user.fullName,
+            major: registration.user.major,
+            year: registration.user.year,
+            registeredAt: registration.registeredAt
+        }));
     }
 }

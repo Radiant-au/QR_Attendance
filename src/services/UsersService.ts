@@ -1,7 +1,8 @@
-import { CreateUserRequestDto, UpdateUserRequestDto, UserResponse } from "@dtos/UserDto";
+import { CreateUserRequestDto, OneUserResponse, UpdateUserRequestDto, UserResponse } from "@dtos/UserDto";
 import { User } from "@entities/Users";
 import { UsersRepository } from "@repositories/UsersRepository";
 import { AppError } from "@utils/AppError";
+import { HashUtils } from "@utils/hash";
 import { QrSignature } from "@utils/Signature";
 
 export class UsersService {
@@ -29,7 +30,7 @@ export class UsersService {
 
     const user = new User();
     user.username = data.username;
-    user.password = data.password;
+    user.password = await HashUtils.hashPassword(data.password);
     user.role = data.role;
     const result = await UsersRepository.save(user);
 
@@ -52,8 +53,8 @@ export class UsersService {
   }
 
   // read one
-  static async getUserById(id: string): Promise<UserResponse> {
-    const user = await UsersRepository.findOneBy({ id });
+  static async getUserById(id: string): Promise<OneUserResponse> {
+    const user = await UsersRepository.findOne({ where : {id: id} , relations: ['registrations', 'attendances']});
 
     if (!user) {
       throw new AppError("User not found", 404);
@@ -65,6 +66,12 @@ export class UsersService {
       role: user.role,
       fullName: user.fullName,
       major: user.major,
+      registrations: user.registrations.map(reg => reg.activityId),
+      attendances: user.attendances.map((a) => ({
+          actvityName: a.activity.title,
+          isPresent: a.isPresent,
+          scanMethod: a.scanMethod
+      })),
       isProfileCompleted: user.isProfileCompleted,
       year: user.year,
       createdAt: user.createdAt,
