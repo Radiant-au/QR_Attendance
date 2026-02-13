@@ -84,18 +84,10 @@ export class AttendanceService {
       attendance.scannedById = scannerId;
       attendance.scanMethod = data.scanMethod;
     } else {
-      // Walk-in user
-      const registration = await ActivityRegistrationRepository.findOne({
-        where: {
-          userId,
-          activityId: data.activityId
-        }
-      });
 
       attendance = AttendanceRepository.create({
         userId,
         activityId: data.activityId,
-        registrationId: registration?.id || undefined,
         attendanceType: 'walk-in',
         isPresent: true,
         scannedAt: new Date(),
@@ -108,7 +100,7 @@ export class AttendanceService {
     await AttendanceRepository.save(attendance);
 
     return {
-      userName: attendance.user.fullName,
+      userId: attendance.userId,
       attendanceType: attendance.attendanceType,
       message: attendance.attendanceType === 'walk-in'
         ? 'Walk-in attendee marked present'

@@ -54,7 +54,7 @@ export class UsersService {
 
   // read one
   static async getUserById(id: string): Promise<OneUserResponse> {
-    const user = await UsersRepository.findOne({ where : {id: id} , relations: ['registrations', 'attendances']});
+    const user = await UsersRepository.findOne({ where : {id: id} , relations: ['registrations', 'attendances.activity']});
 
     if (!user) {
       throw new AppError("User not found", 404);

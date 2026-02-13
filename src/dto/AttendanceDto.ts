@@ -5,7 +5,7 @@ export interface MarkAttendance {
 }
 
 export interface AttendanceResponse {
-    userName: string;
+    userId: string;
     attendanceType: string;
     message: string;
 }

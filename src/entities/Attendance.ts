@@ -23,7 +23,7 @@ export class Attendance {
   @Column({ type: 'uuid' })
   activityId: string;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   registrationId: string;
 
   @Column({ default: false })

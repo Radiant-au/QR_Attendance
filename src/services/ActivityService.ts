@@ -14,7 +14,7 @@ export class ActivityService {
     }
     const oldStatus = activity.status;
     activity.status = data.status;
-    if (oldStatus === 'closed' && data.status === 'ongoing') {
+    if (oldStatus === 'upcoming' && data.status === 'closed') {
       //some attendance creation
       await AttendanceService.initializeAttendance(activity.id);
     }
@@ -60,7 +60,7 @@ export class ActivityService {
     }))
   }
 
-  // read one
+  // data
   static async getActivityAttendanceRegistraion(id: string): Promise<RegisterAttendanceResponseDTO> {
     const registrations = await ActivityRegistrationService.getRegistrationsByActivityId(id);
     const attendance = await AttendanceService.getAttendanceByActivityId(id);
