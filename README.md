@@ -347,8 +347,8 @@ GET /health
 
 ## ✦ Author
 
-Built with precision by **[Your Name]**  
-[Portfolio](https://your-portfolio.dev) · [LinkedIn](https://linkedin.com/in/yourhandle) · [GitHub](https://github.com/your-username)
+Built with precision by **[Aung Kaung Sett]**  
+[Portfolio](https://your-portfolio.dev) · [LinkedIn](https://www.linkedin.com/in/aung-kaung-sett-42ba25197/) · [GitHub](https://github.com/Radiant-au)
 
 ---
 
